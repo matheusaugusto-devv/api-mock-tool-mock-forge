@@ -1,7 +1,9 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+from pathlib import Path
 import time
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 
 from .core.logs import log_manager
 from .db.database import Database
@@ -51,6 +53,10 @@ def create_app(db_path: str = ":memory:") -> FastAPI:
             await log_manager.broadcast("__all__", log_event)
 
         return response
+
+    static_dir = Path(__file__).parent / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
     app.include_router(web)
     app.include_router(api)
