@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}API Hub - Mock API Tool{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+    <h2>API Hub</h2>
+    <input type="text"
+           name="q"
+           placeholder="Search apis..."
+           hx-get="/projects"
+           hx-trigger="keyup changed delay:200ms, search"
+           hx-target="#projects-list-container"
+           hx-push-url="false"
+           style="width: 100%; max-width: 320px;" />
+</div>
+
+<div class="card" style="margin-bottom: 32px;">
+    <h3 style="margin-bottom: 12px;">Create New API</h3>
+    <form hx-post="/projects" hx-target="#form-error" hx-swap="innerHTML" class="flex-row">
+        <input type="text" name="slug" placeholder="e.g. my-app, store-api" required pattern="^[a-z0-9-]+$" style="flex: 1 1 240px; min-width: 200px;" />
+        <button type="submit">Create API</button>
+    </form>
+    <div id="form-error">
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    </div>
+</div>
+
+<h3>All API`s</h3>
+<div id="projects-list-container" style="margin-top: 16px;">
+    {% include "fragments/projects_list.html" %}
+</div>
+{% endblock %}

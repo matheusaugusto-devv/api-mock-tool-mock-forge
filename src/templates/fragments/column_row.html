@@ -1,0 +1,9 @@
+<div class="flex-row column-row" style="margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+    <input type="text" name="column_name" placeholder="Column name (e.g. title, price)" required style="flex: 1 1 200px; min-width: 160px;" />
+    <select name="column_type" style="width: 140px; flex: 0 0 auto;">
+        <option value="text">text</option>
+        <option value="number">number</option>
+        <option value="boolean">boolean</option>
+    </select>
+    <button type="button" class="secondary" onclick="this.closest('.column-row').remove()" style="padding: 6px 12px; flex: 0 0 auto;">Remove</button>
+</div>

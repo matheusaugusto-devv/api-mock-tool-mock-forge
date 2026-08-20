@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.slug }} - Workspace - Mock API Tool{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <p style="color: var(--text-muted); font-size: 0.9em;"><a href="/">&larr; Back to Projects</a></p>
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; flex-wrap: wrap; gap: 8px;">
+        <h2>Workspace: <code>{{ project.slug }}</code></h2>
+        <span class="badge" style="font-size: 0.85rem;">Base URL: /api/{{ project.slug }}</span>
+    </div>
+</div>
+
+<div class="nav-tabs" role="tablist">
+    <a href="/projects/{{ project.slug }}?tab=endpoints"
+       class="nav-tab {% if active_tab == 'endpoints' %}active{% endif %}"
+       hx-get="/projects/{{ project.slug }}?tab=endpoints"
+       hx-target="#workspace-tab-content"
+       hx-push-url="true"
+       onclick="document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active')); this.classList.add('active');">
+       Endpoints
+    </a>
+    <a href="/projects/{{ project.slug }}?tab=data"
+       class="nav-tab {% if active_tab == 'data' %}active{% endif %}"
+       hx-get="/projects/{{ project.slug }}?tab=data"
+       hx-target="#workspace-tab-content"
+       hx-push-url="true"
+       onclick="document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active')); this.classList.add('active');">
+       Data Explorer
+    </a>
+    <a href="/projects/{{ project.slug }}?tab=tester"
+       class="nav-tab {% if active_tab == 'tester' %}active{% endif %}"
+       hx-get="/projects/{{ project.slug }}?tab=tester"
+       hx-target="#workspace-tab-content"
+       hx-push-url="true"
+       onclick="document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active')); this.classList.add('active');">
+       Endpoint Tester
+    </a>
+    <a href="/projects/{{ project.slug }}?tab=auth"
+       class="nav-tab {% if active_tab == 'auth' %}active{% endif %}"
+       hx-get="/projects/{{ project.slug }}?tab=auth"
+       hx-target="#workspace-tab-content"
+       hx-push-url="true"
+       onclick="document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active')); this.classList.add('active');">
+       Authentication
+    </a>
+    <a href="/projects/{{ project.slug }}?tab=logs"
+       class="nav-tab {% if active_tab == 'logs' %}active{% endif %}"
+       hx-get="/projects/{{ project.slug }}?tab=logs"
+       hx-target="#workspace-tab-content"
+       hx-push-url="true"
+       onclick="document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active')); this.classList.add('active');">
+       Logs Monitor
+    </a>
+</div>
+
+<div id="workspace-tab-content">
+    {% if active_tab == 'endpoints' %}
+        {% include "fragments/tab_endpoints.html" %}
+    {% elif active_tab == 'schema' %}
+        <div id="schema-builder-container">
+            {% include "fragments/tab_schema.html" %}
+        </div>
+    {% elif active_tab == 'data' %}
+        {% include "fragments/tab_data.html" %}
+    {% elif active_tab == 'tester' %}
+        {% include "fragments/tab_tester.html" %}
+    {% elif active_tab == 'auth' %}
+        {% include "fragments/tab_auth.html" %}
+    {% elif active_tab == 'logs' %}
+        {% include "fragments/tab_logs.html" %}
+    {% endif %}
+</div>
+{% endblock %}

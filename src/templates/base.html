@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mock API Tool{% endblock %}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --border: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --danger: #f43f5e;
+            --radius: 8px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: clamp(16px, 3vw, 32px);
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        h1, h2, h3 { font-weight: 600; }
+        input, select, button, textarea {
+            font: inherit;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); }
+        button {
+            cursor: pointer;
+            background: var(--primary);
+            color: #0f172a;
+            font-weight: 600;
+            border: none;
+            white-space: nowrap;
+        }
+        button:hover { background: var(--primary-hover); }
+        button.secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        button.secondary:hover { background: var(--surface-hover); }
+        button.danger { background: var(--danger); color: white; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: clamp(14px, 2vw, 24px);
+            margin-bottom: 16px;
+            width: 100%;
+        }
+        .error { color: var(--danger); font-size: 0.9em; margin-top: 4px; }
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-tab {
+            padding: 8px 16px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .nav-tab.active { background: var(--surface); color: var(--text); font-weight: 600; }
+        .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; width: 100%; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--surface-hover);
+            color: var(--text-muted);
+        }
+        @media (min-width: 1920px) {
+            body { max-width: 1800px; font-size: 1.05rem; }
+            .grid-list { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+        }
+    </style>
+</head>
+<body hx-ext="sse">
+    <header>
+        <h1><a href="/" style="color: inherit; text-decoration: none;">Mock Forge</a></h1>
+        <nav><a href="/" class="secondary">API Hub</a></nav>
+    </header>
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

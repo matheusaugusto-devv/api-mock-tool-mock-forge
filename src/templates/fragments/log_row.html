@@ -1,0 +1,15 @@
+<tr>
+    <td style="padding: 8px; border-bottom: 1px solid var(--border); font-family: monospace; font-size: 0.85em; color: var(--text-muted);">{{ log.timestamp }}</td>
+    <td style="padding: 8px; border-bottom: 1px solid var(--border);">
+        <span class="badge" style="font-weight: bold; background: {% if log.method == 'GET' %}#0284c7{% elif log.method == 'POST' %}#16a34a{% elif log.method == 'PUT' %}#d97706{% elif log.method == 'DELETE' %}#dc2626{% else %}var(--surface-hover){% endif %}; color: white;">
+            {{ log.method }}
+        </span>
+    </td>
+    <td style="padding: 8px; border-bottom: 1px solid var(--border); font-family: monospace;">{{ log.path }}</td>
+    <td style="padding: 8px; border-bottom: 1px solid var(--border);">
+        <span class="badge" style="font-weight: bold; background: {% if log.status_code < 300 %}#16a34a{% elif log.status_code < 400 %}#0284c7{% elif log.status_code < 500 %}#d97706{% else %}#dc2626{% endif %}; color: white;">
+            {{ log.status_code }}
+        </span>
+    </td>
+    <td style="padding: 8px; border-bottom: 1px solid var(--border); font-family: monospace; text-align: right;">{{ log.duration_ms }} ms</td>
+</tr>

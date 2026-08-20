@@ -1,0 +1,27 @@
+<tr id="row-{{ row.id }}" style="border-bottom: 1px solid var(--border);">
+    <td style="padding: 8px;"><code>{{ row.id }}</code></td>
+    {% for col in selected_resource.columns %}
+        <td style="padding: 8px;">
+            <input type="text"
+                   name="{{ col.name }}"
+                   value="{{ row[col.name]|default('') }}"
+                   hx-post="/projects/{{ project.slug }}/resources/{{ selected_resource.name }}/rows/{{ row.id }}/edit"
+                   hx-trigger="change"
+                   hx-target="#row-{{ row.id }}"
+                   hx-include="closest tr"
+                   style="width: 100%; font-size: 0.85em; padding: 4px 6px; border: 1px solid transparent; background: transparent;"
+                   onfocus="this.style.border='1px solid var(--border)'; this.style.background='var(--surface)';"
+                   onblur="this.style.border='1px solid transparent'; this.style.background='transparent';" />
+        </td>
+    {% endfor %}
+    <td style="padding: 8px; text-align: right; white-space: nowrap;">
+        <button type="button"
+                class="secondary"
+                hx-delete="/projects/{{ project.slug }}/resources/{{ selected_resource.name }}/rows/{{ row.id }}"
+                hx-target="#row-{{ row.id }}"
+                hx-swap="outerHTML"
+                style="color: var(--error, #e53e3e); padding: 2px 8px; font-size: 0.8em;">
+            Delete
+        </button>
+    </td>
+</tr>

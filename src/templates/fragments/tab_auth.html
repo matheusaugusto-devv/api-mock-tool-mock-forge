@@ -1,0 +1,193 @@
+<div class="card" style="margin-bottom: 24px;">
+    <h3 style="margin-bottom: 8px;">API Authentication Settings</h3>
+    <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 16px;">
+        Choose the authentication mechanism enforced for all endpoints under <code>/api/{{ project.slug }}/...</code>
+    </p>
+
+    {% if error %}
+    <div class="error" style="margin-bottom: 16px;">{{ error }}</div>
+    {% endif %}
+
+    {% if success %}
+    <div style="background-color: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 10px 14px; border-radius: var(--radius); margin-bottom: 16px; font-size: 0.9em;">
+        {{ success }}
+    </div>
+    {% endif %}
+
+    <form hx-post="/projects/{{ project.slug }}/auth/settings"
+          hx-target="#workspace-tab-content"
+          hx-swap="innerHTML">
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; font-weight: 500; font-size: 0.9em; margin-bottom: 8px;">Authentication Method</label>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9em;">
+                    <input type="radio" name="auth_type" value="none" {% if auth.auth_type == 'none' %}checked{% endif %} onchange="toggleAuthFields(this.value)">
+                    <span>None (Public)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9em;">
+                    <input type="radio" name="auth_type" value="api_key" {% if auth.auth_type == 'api_key' %}checked{% endif %} onchange="toggleAuthFields(this.value)">
+                    <span>ApiKey</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9em;">
+                    <input type="radio" name="auth_type" value="basic" {% if auth.auth_type == 'basic' %}checked{% endif %} onchange="toggleAuthFields(this.value)">
+                    <span>Basic Auth</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9em;">
+                    <input type="radio" name="auth_type" value="bearer" {% if auth.auth_type == 'bearer' %}checked{% endif %} onchange="toggleAuthFields(this.value)">
+                    <span>Bearer Token</span>
+                </label>
+            </div>
+        </div>
+
+        <div id="basic-auth-fields" style="display: {% if auth.auth_type == 'basic' %}block{% else %}none{% endif %}; background: var(--bg); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;">
+            <h4 style="margin-top: 0; margin-bottom: 12px; font-weight: 500;">Basic Auth Credentials</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                <div>
+                    <label style="display: block; font-size: 0.85em; font-weight: 500; margin-bottom: 4px; color: var(--text-muted);">Username</label>
+                    <input type="text" name="basic_username" value="{{ auth.basic_username }}" placeholder="e.g. admin" style="width: 100%;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85em; font-weight: 500; margin-bottom: 4px; color: var(--text-muted);">Password</label>
+                    <input type="password" name="basic_password" value="{{ auth.basic_password }}" placeholder="••••••••" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+
+        <div id="bearer-info-panel" style="display: {% if auth.auth_type == 'bearer' %}block{% else %}none{% endif %}; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--primary); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;">
+            <h4 style="margin-top: 0; margin-bottom: 8px; font-weight: 500; color: var(--primary);">Bearer Token Flow</h4>
+            <p style="font-size: 0.9em; margin-bottom: 8px; color: var(--text-muted);">
+                When active, generate a 5-minute bearer token by calling the auto-generated authentication endpoint:
+            </p>
+            <pre style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: var(--radius); font-size: 0.85em; overflow-x: auto;"><code>curl -X POST http://localhost:8000/api/{{ project.slug }}/auth \
+  -H "Content-Type: application/json" \
+  -d '{"apiKey": "YOUR_API_KEY_WITH_AUTH_SCOPE"}'</code></pre>
+            <p style="font-size: 0.85em; margin-top: 8px; margin-bottom: 0; color: var(--text-muted);">
+                Include the returned token in subsequent requests header: <code>Authorization: Bearer &lt;access_token&gt;</code>.
+            </p>
+        </div>
+
+        <button type="submit">Save Settings</button>
+    </form>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+        <div>
+            <h3 style="margin: 0;">API Keys & Scopes</h3>
+            <p style="color: var(--text-muted); font-size: 0.9em; margin: 4px 0 0 0;">
+                Manage API Keys used for direct ApiKey authentication or to generate temporary Bearer tokens.
+            </p>
+        </div>
+        <button type="button"
+                id="btn-add-key"
+                onclick="const f = document.getElementById('add-key-form-container'); f.style.display = f.style.display === 'none' ? 'block' : 'none';">
+            + Generate Key
+        </button>
+    </div>
+
+    <div id="add-key-form-container" class="card" style="display: {% if key_error %}block{% else %}none{% endif %}; background: var(--bg); border: 1px solid var(--border); margin-bottom: 20px;">
+        <h4 style="margin-top: 0; margin-bottom: 12px; font-weight: 500;">Generate New API Key</h4>
+        
+        {% if key_error %}
+        <div class="error" style="margin-bottom: 12px;">{{ key_error }}</div>
+        {% endif %}
+
+        <form hx-post="/projects/{{ project.slug }}/auth/keys"
+              hx-target="#workspace-tab-content"
+              hx-swap="innerHTML">
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.85em; font-weight: 500; margin-bottom: 4px; color: var(--text-muted);">Key Name / Description</label>
+                <input type="text" name="name" placeholder="e.g. Mobile App, Backend Service" required style="width: 100%; max-width: 400px;">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 0.85em; font-weight: 500; margin-bottom: 6px; color: var(--text-muted);">Associated Scopes</label>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em; cursor: pointer;">
+                        <input type="checkbox" name="scopes" value="read" checked>
+                        <span><code>read</code> (GET)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em; cursor: pointer;">
+                        <input type="checkbox" name="scopes" value="write" checked>
+                        <span><code>write</code> (POST, PUT, DELETE)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em; cursor: pointer;">
+                        <input type="checkbox" name="scopes" value="auth">
+                        <span><code>auth</code> (Generate Bearer Token)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em; cursor: pointer;">
+                        <input type="checkbox" name="scopes" value="admin">
+                        <span><code>admin</code> (Full Access)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit">Generate</button>
+                <button type="button" class="secondary" onclick="document.getElementById('add-key-form-container').style.display = 'none';">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" style="padding: 0; overflow-x: auto; border: 1px solid var(--border);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9em;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <th style="padding: 12px 16px;">Name</th>
+                    <th style="padding: 12px 16px;">API Key</th>
+                    <th style="padding: 12px 16px;">Scopes</th>
+                    <th style="padding: 12px 16px;">Created</th>
+                    <th style="padding: 12px 16px; text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if api_keys %}
+                    {% for key in api_keys %}
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 12px 16px; font-weight: 500;">{{ key.name }}</td>
+                        <td style="padding: 12px 16px;">
+                            <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                <code id="key-val-{{ key.id }}">{{ key.key }}</code>
+                                <button type="button" class="secondary" style="padding: 2px 8px; font-size: 0.75em;" onclick="navigator.clipboard.writeText('{{ key.key }}'); this.innerText = 'Copied!'; setTimeout(() => this.innerText = 'Copy', 1500);">Copy</button>
+                            </div>
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                {% for scope in key.scopes %}
+                                <span class="badge">{{ scope }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 16px; color: var(--text-muted); font-size: 0.85em;">{{ key.created_at }}</td>
+                        <td style="padding: 12px 16px; text-align: right;">
+                            <button class="secondary danger"
+                                    style="padding: 4px 10px; font-size: 0.8em;"
+                                    hx-delete="/projects/{{ project.slug }}/auth/keys/{{ key.id }}"
+                                    hx-target="#workspace-tab-content"
+                                    hx-confirm="Are you sure you want to revoke this API Key?">
+                                Revoke
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                            No API Keys generated for this project yet. Click <strong>+ Generate Key</strong> to create one.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function toggleAuthFields(val) {
+    var basicFields = document.getElementById('basic-auth-fields');
+    var bearerPanel = document.getElementById('bearer-info-panel');
+    if (basicFields) basicFields.style.display = (val === 'basic') ? 'block' : 'none';
+    if (bearerPanel) bearerPanel.style.display = (val === 'bearer') ? 'block' : 'none';
+}
+</script>
+

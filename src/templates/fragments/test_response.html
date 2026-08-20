@@ -1,0 +1,12 @@
+<div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-weight: 600; font-size: 0.9em;">Response</span>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <span class="badge" style="font-weight: bold; background: {% if status_code < 300 %}#16a34a{% elif status_code < 400 %}#0284c7{% elif status_code < 500 %}#d97706{% else %}#dc2626{% endif %}; color: white;">
+                Status: {{ status_code }}
+            </span>
+            <span class="badge" style="font-family: monospace;">{{ duration_ms }} ms</span>
+        </div>
+    </div>
+    <pre style="margin: 0; padding: 12px; background: #0b1120; border-radius: 4px; overflow-x: auto; font-family: monospace; font-size: 0.9em; max-height: 400px; color: #38bdf8;">{{ response_json }}</pre>
+</div>

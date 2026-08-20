@@ -1,0 +1,19 @@
+<div id="resources-list" style="margin-top: 16px;">
+    {% if resources %}
+        {% for res in resources %}
+            <div class="card" style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h4>{{ res.name }}</h4>
+                    <span class="badge">/api/{{ project.slug }}/{{ res.name }}</span>
+                </div>
+                <div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+                    {% for col in res.columns %}
+                        <span class="badge" style="background: var(--surface-hover);">{{ col.name }}: {{ col.type|default('text') }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: var(--text-muted);">No resources created yet for this project.</p>
+    {% endif %}
+</div>

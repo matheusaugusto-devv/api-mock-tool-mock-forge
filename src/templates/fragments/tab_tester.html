@@ -1,0 +1,47 @@
+<div class="card" style="margin-top: 16px;">
+    <h3>Endpoint Tester</h3>
+    <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 16px;">
+        Test synthetic routes and custom endpoints against this project.
+    </p>
+
+    <form hx-post="/projects/{{ project.slug }}/test-request"
+          hx-target="#test-response-container"
+          hx-indicator="#test-spinner"
+          style="display: flex; flex-direction: column; gap: 12px;">
+        
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <select name="method" style="width: 120px; font-weight: bold; flex: 0 0 auto;">
+                <option value="GET" selected>GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+            </select>
+            <input type="text"
+                   name="path"
+                   id="test-path-input"
+                   placeholder="/api/{{ project.slug }}/..."
+                   value="{% if resources %}/api/{{ project.slug }}/{{ resources[0].name }}{% else %}/api/{{ project.slug }}{% endif %}"
+                   style="flex: 1 1 280px; min-width: 200px; font-family: monospace;"
+                   required />
+            <button type="submit" style="min-width: 100px; flex: 0 0 auto;">Send</button>
+        </div>
+
+        <div>
+            <label style="display: block; font-size: 0.85em; color: var(--text-muted); margin-bottom: 4px;">
+                JSON Body (for POST / PUT)
+            </label>
+            <textarea name="body"
+                      rows="4"
+                      placeholder='{"key": "value"}'
+                      style="width: 100%; font-family: monospace; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); padding: 8px;"></textarea>
+        </div>
+    </form>
+
+    <div id="test-spinner" class="htmx-indicator" style="margin-top: 12px; color: var(--primary);">
+        Executing request...
+    </div>
+
+    <div id="test-response-container" style="margin-top: 16px;">
+        <!-- Response rendered here -->
+    </div>
+</div>

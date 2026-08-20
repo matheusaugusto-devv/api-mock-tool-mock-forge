@@ -1,0 +1,71 @@
+<div id="tab-endpoints-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>Endpoints</h3>
+        <button type="button"
+                id="btn-add-endpoint"
+                onclick="const f = document.getElementById('add-endpoint-form-container'); f.style.display = f.style.display === 'none' ? 'block' : 'none';">
+            + Add Endpoint
+        </button>
+    </div>
+
+    <div id="add-endpoint-form-container" class="card" style="display: {% if show_add_form or error %}block{% else %}none{% endif %}; margin-bottom: 20px;">
+        <h4 style="margin-bottom: 12px;">Create New Endpoint</h4>
+        <form hx-post="/projects/{{ project.slug }}/endpoints"
+              hx-target="#tab-endpoints-container"
+              hx-swap="outerHTML">
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 4px; font-weight: 500; font-size: 0.9em;">Endpoint Name (Resource)</label>
+                <input type="text" name="name" placeholder="e.g. users, orders" required style="width: 100%;" />
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label style="font-weight: 500; font-size: 0.9em;">Columns</label>
+                    <button type="button"
+                            class="secondary"
+                            hx-get="/fragments/column-row"
+                            hx-target="#new-endpoint-columns"
+                            hx-swap="beforeend"
+                            style="font-size: 0.85em; padding: 4px 8px;">+ Add Column</button>
+                </div>
+                <div id="new-endpoint-columns">
+                    {% include "fragments/column_row.html" %}
+                </div>
+            </div>
+
+            {% if error %}
+                <div class="error" style="margin-bottom: 12px;">{{ error }}</div>
+            {% endif %}
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit">Create</button>
+                <button type="button" class="secondary" onclick="document.getElementById('add-endpoint-form-container').style.display = 'none';">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" style="padding: 0; overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                    <th style="padding: 12px 16px;">Resource & Schema</th>
+                    <th style="padding: 12px 16px;">Route</th>
+                    <th style="padding: 12px 16px; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="endpoints-table-body">
+                {% if resources %}
+                    {% for res in resources %}
+                        {% include "fragments/endpoint_row.html" %}
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" style="padding: 24px; text-align: center; color: var(--text-muted);">
+                            No endpoints defined yet. Click <strong>+ Add Endpoint</strong> to create one.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>

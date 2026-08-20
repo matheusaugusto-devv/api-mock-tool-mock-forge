@@ -1,0 +1,36 @@
+<div class="card" style="margin-top: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+            <h3>Real-Time Request Logs</h3>
+            <p style="color: var(--text-muted); font-size: 0.9em;">
+                Listening to Server-Sent Events (SSE) on <code>/events/logs/{{ project.slug }}</code>
+            </p>
+        </div>
+        <div>
+            <button class="secondary" onclick="document.getElementById('logs-table-body').innerHTML = '';" style="font-size: 0.85em;">
+                Clear Logs
+            </button>
+        </div>
+    </div>
+
+    <div hx-ext="sse" sse-connect="/events/logs/{{ project.slug }}" sse-swap="message" hx-target="#logs-table-body" hx-swap="afterbegin" style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 0.85em;">
+                    <th style="padding: 8px;">TIMESTAMP</th>
+                    <th style="padding: 8px;">METHOD</th>
+                    <th style="padding: 8px;">PATH</th>
+                    <th style="padding: 8px;">STATUS</th>
+                    <th style="padding: 8px; text-align: right;">DURATION</th>
+                </tr>
+            </thead>
+            <tbody id="logs-table-body">
+                {% if logs %}
+                    {% for log in logs %}
+                        {% include "fragments/log_row.html" %}
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>

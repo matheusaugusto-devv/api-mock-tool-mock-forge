@@ -1,0 +1,130 @@
+<div id="data-explorer-container" class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>Data Explorer</h3>
+        <div style="display: flex; gap: 8px;">
+            <a href="/projects/{{ project.slug }}/export/json" class="button secondary" download style="font-size: 0.85em; padding: 6px 12px;">Export JSON</a>
+            <a href="/projects/{{ project.slug }}/export/openapi" class="button secondary" download style="font-size: 0.85em; padding: 6px 12px;">Export OpenAPI</a>
+        </div>
+    </div>
+
+    <!-- Import Section -->
+
+    {% if error %}
+        <div class="error" style="margin-bottom: 12px;">{{ error }}</div>
+    {% endif %}
+
+    {% if resources %}
+        <div style="margin-bottom: 16px;">
+            <label style="font-size: 0.9em; font-weight: 500; margin-bottom: 6px; display: block;">Select Endpoint:</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                {% for res in resources %}
+                    <button type="button"
+                            class="{% if selected_resource and selected_resource.name == res.name %}primary{% else %}secondary{% endif %}"
+                            hx-get="/projects/{{ project.slug }}/data?resource={{ res.name }}"
+                            hx-target="#workspace-tab-content"
+                            style="font-size: 0.85em; padding: 6px 12px;">
+                        {{ res.name }}
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if selected_resource %}
+            <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <h4 style="margin: 0;">Resource: <code>{{ selected_resource.name }}</code></h4>
+                        <span style="font-size: 0.85em; color: var(--text-muted);">{{ rows|length }} records found</span>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <!-- Import JSON Data Form -->
+                        <form hx-post="/projects/{{ project.slug }}/resources/{{ selected_resource.name }}/import-data"
+                              hx-target="#workspace-tab-content"
+                              enctype="multipart/form-data"
+                              style="display: flex; gap: 6px; align-items: center;">
+                            <input type="file" name="file" accept=".json" required style="font-size: 0.8em; max-width: 180px;" />
+                            <button type="submit" class="secondary" style="padding: 4px 8px; font-size: 0.8em;">Import JSON Data</button>
+                        </form>
+
+                        <!-- Generate Mocks Form -->
+                        <form hx-post="/projects/{{ project.slug }}/resources/{{ selected_resource.name }}/generate-mocks"
+                              hx-target="#workspace-tab-content"
+                              style="display: flex; gap: 8px; align-items: center;">
+                            <input type="number" name="count" value="10" min="1" max="100" style="width: 80px; padding: 4px 8px; font-size: 0.85em;" title="Count" />
+                            <button type="submit" class="secondary" style="padding: 6px 12px; font-size: 0.85em;">Gerar Mocks</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div style="margin-bottom: 12px;">
+                    <input type="text"
+                           name="q"
+                           value="{{ q|default('') }}"
+                           placeholder="Search records in {{ selected_resource.name }}..."
+                           hx-get="/projects/{{ project.slug }}/data?resource={{ selected_resource.name }}"
+                           hx-target="#workspace-tab-content"
+                           hx-trigger="keyup changed delay:300ms, search"
+                           style="width: 100%; font-size: 0.9em; padding: 6px 10px;" />
+                </div>
+
+                <!-- Records Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9em;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border);">
+                                <th style="padding: 8px;">ID</th>
+                                {% for col in selected_resource.columns %}
+                                    <th style="padding: 8px;">{{ col.name }} <span style="font-weight: normal; color: var(--text-muted); font-size: 0.8em;">({{ col.type }})</span></th>
+                                {% endfor %}
+                                <th style="padding: 8px; text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rows-table-body">
+                            {% if rows %}
+                                {% for row in rows %}
+                                    <tr id="row-{{ row.id }}" style="border-bottom: 1px solid var(--border);">
+                                        <td style="padding: 8px;"><code>{{ row.id }}</code></td>
+                                        {% for col in selected_resource.columns %}
+                                            <td style="padding: 8px;">
+                                                <input type="text"
+                                                       name="{{ col.name }}"
+                                                       value="{{ row[col.name]|default('') }}"
+                                                       hx-post="/projects/{{ project.slug }}/resources/{{ selected_resource.name }}/rows/{{ row.id }}/edit"
+                                                       hx-trigger="change"
+                                                       hx-target="#row-{{ row.id }}"
+                                                       hx-include="closest tr"
+                                                       style="width: 100%; font-size: 0.85em; padding: 4px 6px; border: 1px solid transparent; background: transparent;"
+                                                       onfocus="this.style.border='1px solid var(--border)'; this.style.background='var(--surface)';"
+                                                       onblur="this.style.border='1px solid transparent'; this.style.background='transparent';" />
+                                            </td>
+                                        {% endfor %}
+                                        <td style="padding: 8px; text-align: right; white-space: nowrap;">
+                                            <button type="button"
+                                                    class="secondary"
+                                                    hx-delete="/projects/{{ project.slug }}/resources/{{ selected_resource.name }}/rows/{{ row.id }}"
+                                                    hx-target="#row-{{ row.id }}"
+                                                    hx-swap="outerHTML"
+                                                    style="color: var(--error, #e53e3e); padding: 2px 8px; font-size: 0.8em;">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="{{ selected_resource.columns|length + 2 }}" style="padding: 16px; text-align: center; color: var(--text-muted);">
+                                        No records found. Click "Gerar Mocks" to create mock data.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <p style="color: var(--text-muted);">No resources found. Create a resource in Schema Builder first or import OpenAPI / JSON.</p>
+    {% endif %}
+</div>

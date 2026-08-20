@@ -1,0 +1,17 @@
+<div class="grid-list" id="projects-list">
+    {% if projects %}
+        {% for project in projects %}
+            <div class="card project-card" id="project-{{ project.slug }}">
+                <h3><a href="/projects/{{ project.slug }}">{{ project.slug }}</a></h3>
+                <p style="color: var(--text-muted); font-size: 0.85em; margin-top: 8px;">
+                    API: <code>/api/{{ project.slug }}/*</code>
+                </p>
+                <div style="margin-top: 12px;">
+                    <a href="/projects/{{ project.slug }}" class="button" style="display: inline-block; padding: 4px 10px; background: var(--surface-hover); border-radius: var(--radius); font-size: 0.85em;">Open Workspace &rarr;</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: var(--text-muted);">No projects found.</p>
+    {% endif %}
+</div>

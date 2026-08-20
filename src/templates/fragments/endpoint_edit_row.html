@@ -1,0 +1,52 @@
+<tr id="endpoint-row-{{ res.id }}">
+    <td colspan="3" style="padding: 12px 16px; border-bottom: 1px solid var(--border);">
+        <form hx-put="/projects/{{ project.slug }}/endpoints/{{ res.id }}"
+              hx-target="#endpoint-row-{{ res.id }}"
+              hx-swap="outerHTML"
+              style="padding: 8px 0;">
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; margin-bottom: 4px; font-weight: 500; font-size: 0.85em;">Endpoint / Resource Name</label>
+                <input type="text" name="name" value="{{ res.name }}" required style="width: 100%;" />
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label style="font-weight: 500; font-size: 0.85em;">Columns</label>
+                    <button type="button"
+                            class="secondary"
+                            hx-get="/fragments/column-row"
+                            hx-target="#edit-columns-container-{{ res.id }}"
+                            hx-swap="beforeend"
+                            style="font-size: 0.8em; padding: 2px 6px;">+ Add Column</button>
+                </div>
+                <div id="edit-columns-container-{{ res.id }}">
+                    {% for col in res.columns %}
+                        <div class="flex-row column-row" style="margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                            <input type="text" name="column_name" value="{{ col.name }}" placeholder="Column name" required style="flex: 1 1 200px; min-width: 160px;" />
+                            <select name="column_type" style="width: 140px; flex: 0 0 auto;">
+                                <option value="text" {% if col.type == 'text' %}selected{% endif %}>text</option>
+                                <option value="number" {% if col.type == 'number' %}selected{% endif %}>number</option>
+                                <option value="boolean" {% if col.type == 'boolean' %}selected{% endif %}>boolean</option>
+                            </select>
+                            <button type="button" class="secondary" onclick="this.closest('.column-row').remove()" style="padding: 6px 12px; flex: 0 0 auto;">Remove</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if error %}
+                <div class="error" style="margin-bottom: 8px;">{{ error }}</div>
+            {% endif %}
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" style="padding: 6px 12px; font-size: 0.85em;">Save</button>
+                <button type="button"
+                        class="secondary"
+                        style="padding: 6px 12px; font-size: 0.85em;"
+                        hx-get="/projects/{{ project.slug }}/endpoints/{{ res.id }}/cancel"
+                        hx-target="#endpoint-row-{{ res.id }}"
+                        hx-swap="outerHTML">Cancel</button>
+            </div>
+        </form>
+    </td>
+</tr>
