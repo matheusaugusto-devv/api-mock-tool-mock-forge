@@ -182,6 +182,22 @@ def list_projects(request: Request):
     return _db(request).list_projects()
 
 
+@api.put("/projects/{slug}")
+def update_project_api(request: Request, slug: str, body: dict = Body(...)):
+    project = _get_project_and_authenticate(request, slug, required_scope="admin")
+    new_slug = validate_slug(body.get("slug"))
+    db = _db(request)
+    return db.update_project(project["id"], new_slug)
+
+
+@api.delete("/projects/{slug}", status_code=204)
+def delete_project_api(request: Request, slug: str):
+    project = _get_project_and_authenticate(request, slug, required_scope="admin")
+    db = _db(request)
+    db.delete_project(project["id"])
+    return Response(status_code=204)
+
+
 @api.post("/projects/{slug}/resources", status_code=201)
 def create_resource(request: Request, slug: str, body: dict = Body(...)):
     db = _db(request)

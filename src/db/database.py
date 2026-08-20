@@ -68,6 +68,23 @@ class Database:
         rows = self.conn.execute("SELECT * FROM projects ORDER BY id").fetchall()
         return [dict(row) for row in rows]
 
+    def update_project(self, project_id: int, new_slug: str) -> dict | None:
+        try:
+            cur = self.conn.execute(
+                "UPDATE projects SET slug = ? WHERE id = ?", (new_slug, project_id)
+            )
+            self.conn.commit()
+        except sqlite3.IntegrityError:
+            raise ConflictError(f"Project '{new_slug}' already exists")
+        if cur.rowcount == 0:
+            return None
+        return {"id": project_id, "slug": new_slug}
+
+    def delete_project(self, project_id: int) -> bool:
+        cur = self.conn.execute("DELETE FROM projects WHERE id = ?", (project_id,))
+        self.conn.commit()
+        return cur.rowcount > 0
+
     def create_resource(self, project_id: int, name: str, columns: list[dict]) -> dict:
         try:
             cur = self.conn.execute(

@@ -184,6 +184,86 @@ async def create_project_form(request: Request, slug: str = Form(...)):
     return RedirectResponse(url=workspace_url, status_code=303)
 
 
+@web.get("/projects/{slug}/edit", response_class=HTMLResponse)
+async def get_project_edit_view(request: Request, slug: str):
+    db = _db(request)
+    project = db.get_project(slug)
+    if not project:
+        raise HTTPException(status_code=404, detail=f"Project '{slug}' not found")
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/project_edit_card.html",
+        context={"project": project},
+    )
+
+
+@web.get("/projects/{slug}/cancel", response_class=HTMLResponse)
+async def get_project_cancel_view(request: Request, slug: str):
+    db = _db(request)
+    project = db.get_project(slug)
+    if not project:
+        raise HTTPException(status_code=404, detail=f"Project '{slug}' not found")
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/project_card.html",
+        context={"project": project},
+    )
+
+
+@web.post("/projects/{slug}/edit", response_class=HTMLResponse)
+async def edit_project_form(request: Request, slug: str, new_slug: Optional[str] = Form(None)):
+    db = _db(request)
+    project = db.get_project(slug)
+    if not project:
+        raise HTTPException(status_code=404, detail=f"Project '{slug}' not found")
+
+    form_data = await request.form()
+    input_slug = form_data.get("slug") or new_slug or ""
+    error = None
+    updated_project = None
+
+    try:
+        validated_slug = validate_slug(input_slug.strip())
+        updated_project = db.update_project(project["id"], validated_slug)
+    except (InvalidPayloadError, ConflictError) as exc:
+        error = str(exc)
+
+    if error or not updated_project:
+        return templates.TemplateResponse(
+            request=request,
+            name="fragments/project_edit_card.html",
+            context={
+                "project": project,
+                "new_slug": input_slug,
+                "error": error or "Update failed",
+            },
+            status_code=422 if error else 400,
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/project_card.html",
+        context={"project": updated_project},
+    )
+
+
+@web.post("/projects/{slug}/delete", response_class=HTMLResponse)
+@web.delete("/projects/{slug}", response_class=HTMLResponse)
+async def delete_project_view(request: Request, slug: str):
+    db = _db(request)
+    project = db.get_project(slug)
+    if not project:
+        raise HTTPException(status_code=404, detail=f"Project '{slug}' not found")
+
+    db.delete_project(project["id"])
+    projects = db.list_projects()
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/projects_list.html",
+        context={"projects": projects},
+    )
+
+
 @web.get("/projects/{slug}", response_class=HTMLResponse)
 async def get_workspace(request: Request, slug: str, tab: str = "endpoints", resource: Optional[str] = None, q: Optional[str] = None):
     db = _db(request)

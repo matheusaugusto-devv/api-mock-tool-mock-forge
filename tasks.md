@@ -89,9 +89,14 @@
 - [x] Implementar endpoints web em `src/router/web.py` para salvar configurações, criar ApiKeys e revogar ApiKeys via HTMX
 - [x] Criar testes automatizados em `tests/test_auth_ui.py` cobrindo todos os critérios de aceitação com cobertura >= 90%
 
+## Feature: workspace_edit_and_delete (specs/11_workspace_edit_and_delete.md)
 
-
-
+- [x] Implementar `Database.update_project(project_id, new_slug)` e `Database.delete_project(project_id)` em `src/db/database.py`
+- [x] Implementar `PUT /api/projects/{slug}` para renomear projeto com validação, 409 em duplicidade e exigência de escopo `admin` quando auth ativa
+- [x] Implementar `DELETE /api/projects/{slug}` com remoção em cascade (via FK) e exigência de escopo `admin` quando auth ativa
+- [x] Implementar rotas web `POST /projects/{slug}/edit` e `POST /projects/{slug}/delete` retornando a lista HTMX atualizada
+- [x] Atualizar `fragments/projects_list.html` com botões de editar e excluir (com `hx-confirm`) por card
+- [x] Criar testes automatizados em `tests/test_workspace_edit_and_delete.py` cobrindo todos os critérios de aceitação com cobertura >= 90%
 
 
 

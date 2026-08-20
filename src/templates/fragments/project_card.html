@@ -1,0 +1,26 @@
+<div class="card project-card" id="project-{{ project.slug }}">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+        <div>
+            <h3 style="margin: 0;"><a href="/projects/{{ project.slug }}">{{ project.slug }}</a></h3>
+            <p style="color: var(--text-muted); font-size: 0.85em; margin-top: 8px;">
+                API: <code>/api/{{ project.slug }}/*</code>
+            </p>
+        </div>
+    </div>
+    <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <a href="/projects/{{ project.slug }}" class="button" style="display: inline-block; padding: 4px 10px; background: var(--surface-hover); border-radius: var(--radius); font-size: 0.85em;">Open Workspace &rarr;</a>
+        <button type="button"
+                class="secondary"
+                style="padding: 4px 8px; font-size: 0.85em;"
+                hx-get="/projects/{{ project.slug }}/edit"
+                hx-target="#project-{{ project.slug }}"
+                hx-swap="outerHTML">Edit</button>
+        <button type="button"
+                class="secondary"
+                style="padding: 4px 8px; font-size: 0.85em; color: var(--danger-color, #ff4d4f);"
+                hx-post="/projects/{{ project.slug }}/delete"
+                hx-target="#projects-list-container"
+                hx-swap="innerHTML"
+                hx-confirm="Are you sure you want to delete workspace '{{ project.slug }}'?">Delete</button>
+    </div>
+</div>

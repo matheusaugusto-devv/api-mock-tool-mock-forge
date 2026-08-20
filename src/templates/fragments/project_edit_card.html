@@ -1,0 +1,27 @@
+<div class="card project-card" id="project-{{ project.slug }}">
+    <form hx-post="/projects/{{ project.slug }}/edit"
+          hx-target="#project-{{ project.slug }}"
+          hx-swap="outerHTML"
+          style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-weight: 500; font-size: 0.85em;">Workspace Slug</label>
+        <input type="text"
+               name="slug"
+               value="{{ new_slug|default(project.slug) }}"
+               required
+               pattern="^[a-z0-9-]+$"
+               placeholder="e.g. my-app"
+               style="width: 100%;" />
+        {% if error %}
+            <div class="error" style="margin-top: 4px; font-size: 0.85em;">{{ error }}</div>
+        {% endif %}
+        <div style="margin-top: 8px; display: flex; gap: 8px;">
+            <button type="submit" style="padding: 4px 10px; font-size: 0.85em;">Save</button>
+            <button type="button"
+                    class="secondary"
+                    style="padding: 4px 10px; font-size: 0.85em;"
+                    hx-get="/projects/{{ project.slug }}/cancel"
+                    hx-target="#project-{{ project.slug }}"
+                    hx-swap="outerHTML">Cancel</button>
+        </div>
+    </form>
+</div>

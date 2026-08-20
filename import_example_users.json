@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Ana Silva",
+    "email": "ana.silva@example.com",
+    "address": "Rua das Flores, 123, São Paulo - SP, Brasil"
+  },
+  {
+    "name": "Carlos Oliveira",
+    "email": "carlos.oliveira@example.com",
+    "address": "Av. Paulista, 1500, Apt 42, São Paulo - SP, Brasil"
+  },
+  {
+    "name": "Mariana Santos",
+    "email": "mariana.santos@example.com",
+    "address": "Rua dos Andradas, 456, Porto Alegre - RS, Brasil"
+  },
+  {
+    "name": "Lucas Souza",
+    "email": "lucas.souza@example.com",
+    "address": "Av. Boa Viagem, 789, Recife - PE, Brasil"
+  },
+  {
+    "name": "Beatriz Lima",
+    "email": "beatriz.lima@example.com",
+    "address": "Rua da Bahia, 1011, Belo Horizonte - MG, Brasil"
+  },
+  {
+    "name": "Fernando Pereira",
+    "email": "fernando.pereira@example.com",
+    "address": "Av. Atlântica, 2020, Rio de Janeiro - RJ, Brasil"
+  },
+  {
+    "name": "Camila Alves",
+    "email": "camila.alves@example.com",
+    "address": "Rua XV de Novembro, 303, Curitiba - PR, Brasil"
+  },
+  {
+    "name": "Rodrigo Costa",
+    "email": "rodrigo.costa@example.com",
+    "address": "Av. Afonso Pena, 1415, Campo Grande - MS, Brasil"
+  },
+  {
+    "name": "Juliana Martins",
+    "email": "juliana.martins@example.com",
+    "address": "Rua Chile, 505, Salvador - BA, Brasil"
+  },
+  {
+    "name": "Gabriel Ferreira",
+    "email": "gabriel.ferreira@example.com",
+    "address": "Av. Beira Mar, 808, Florianópolis - SC, Brasil"
+  }
+]

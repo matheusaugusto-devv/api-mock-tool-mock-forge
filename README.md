@@ -117,6 +117,31 @@ await fetch('http://localhost:8000/api/ecommerce/products/1', {
 
 ---
 
+## 📥 Importação de Dados (JSON)
+
+Para popular rapidamente uma tabela/recurso via interface (Data Explorer), você pode importar um arquivo JSON contendo uma lista de objetos.
+
+Considere uma tabela com os campos: `name`, `email` e `address`. Para subir dados nesta tabela, podemos usar o arquivo [`import_example_users.json`](./import_example_users.json):
+
+```json
+[
+  {
+    "name": "Ana Silva",
+    "email": "ana.silva@example.com",
+    "address": "Rua das Flores, 123, São Paulo - SP, Brasil"
+  },
+  {
+    "name": "Carlos Oliveira",
+    "email": "carlos.oliveira@example.com",
+    "address": "Av. Paulista, 1500, Apt 42, São Paulo - SP, Brasil"
+  }
+]
+```
+
+Basta acessar o **Data Explorer** do recurso desejado no painel e fazer o upload do arquivo `import_example_users.json`.
+
+---
+
 ## 🛠️ Funcionalidades Principais
 
 - **Dynamic REST Engine**: CRUD instantâneo com SQLite para cada schema configurado.
