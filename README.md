@@ -1,6 +1,6 @@
 # Mock Forge
 
-Mock Forge é uma ferramenta CLI leve e completa para criação rápida de APIs REST mock dinâmicas com interface web em HTMX, suporte a geração de dados com Faker, importação/exportação OpenAPI 3.0 e streaming de logs em tempo real via Server-Sent Events (SSE).
+Mock Forge é uma ferramenta CLI leve e completa para criação rápida de APIs REST mock dinâmicas com interface web em HTMX, suporte a geração de dados com Faker, importação/exportação OpenAPI 3.0, streaming de logs em tempo real via Server-Sent Events (SSE) e suporte a autenticação via apiKey e Bearer token. Você cria uma api e configura conforme os requisitos do seu frontend, esta aplicação é ideal para prototipagem rápida de frontends sem ter a necessidade de contruir um backend.
 
 ---
 
